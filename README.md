@@ -24,7 +24,6 @@ $ cargo install espflash
 Connect the M5Stamp C3 to your computer and run the following command:
 
 ```console
-$ cargo install cargo-espflash
 $ cp xtask-config.sample.json xtask-config.json
 $ $EDITOR xtask-config.json # Edit the `env.ESPFLASH_PORT` field to match your setup
 $ cargo x run
