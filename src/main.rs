@@ -3,7 +3,7 @@ mod face_rotation;
 use std::iter::repeat;
 
 use bstr::ByteSlice;
-use esp32_nimble::{uuid128, BLEClient, BLEDevice, BLEScan};
+use esp32_nimble::{utilities::BleUuid, uuid128, BLEClient, BLEDevice, BLEScan};
 use esp_idf_svc::{
     hal::{
         delay::FreeRtos,
@@ -21,9 +21,11 @@ use ws2812_esp32_rmt_driver::{driver::color::LedPixelColorGrbw32, LedPixelEsp32R
 use crate::face_rotation::{FaceRotation, FaceRotation::*};
 
 const DEVICE_NAME: &str = "GAN-a7f13";
-const SERVICE_UUID: &str = "0000fff0-0000-1000-8000-00805f9b34fb";
-const CHARACTERISTIC_UUID: &str = "0000fff3-0000-1000-8000-00805f9b34fb";
-
+const SERVICE_UUID: BleUuid = uuid128!("0000fff0-0000-1000-8000-00805f9b34fb");
+const MOVE_CHARACTERISTIC_UUID: BleUuid = uuid128!("0000fff3-0000-1000-8000-00805f9b34fb");
+const STATUS_CHARACTERISTIC_UUID: BleUuid = uuid128!("0000fff2-0000-1000-8000-00805f9b34fb");
+const QUANTUM_TURN_DURATION_MS: usize = 150;
+const DOUBLE_TURN_DURATION_MS: usize = 250;
 const FACE_ROTATION_MAP: [FaceRotation; 20] = [
     R, R2, R2Prime, RPrime, F, F2, F2Prime, FPrime, D, D2, D2Prime, DPrime, L, L2, L2Prime, LPrime,
     B, B2, B2Prime, BPrime,
@@ -74,10 +76,8 @@ fn main() -> anyhow::Result<()> {
             });
 
             client.connect(&device.addr()).await?;
-            let service = client.get_service(uuid128!(SERVICE_UUID)).await?;
+            let service = client.get_service(SERVICE_UUID).await?;
             info!("Found service: {service}");
-            let characteristic = service.get_characteristic(uuid128!(CHARACTERISTIC_UUID)).await?;
-            info!("Found characteristic: {characteristic}");
             info!("Ready");
 
             loop {
@@ -93,12 +93,58 @@ fn main() -> anyhow::Result<()> {
                         .inspect(|m| info!("- Move: {m}"))
                         .map(u8::from)
                         .collect::<Vec<_>>();
-                    characteristic.write_value(&moves, false).await?;
-                }
 
-                FreeRtos::delay_ms(100);
+                    let mut bytes = [0u8; 18];
+                    moves.iter().enumerate().for_each(|(i, &m)| {
+                        let byte_index = i / 2;
+                        bytes[byte_index] += m;
+                        if i % 2 == 0 {
+                            bytes[byte_index] *= 0x10;
+                        }
+                    });
+
+                    if moves.len() % 2 == 1 {
+                        bytes[(moves.len() / 2).saturating_sub(1)] += 0x0f;
+                    }
+
+                    for i in bytes.iter_mut().skip(moves.len()) {
+                        *i = 0xff;
+                    }
+
+                    let sleep_duration = moves.iter().map(|&m| move_duration(m)).sum::<usize>();
+
+                    service
+                        .get_characteristic(MOVE_CHARACTERISTIC_UUID)
+                        .await?
+                        .write_value(&moves, false)
+                        .await?;
+                    FreeRtos::delay_ms((sleep_duration as f64 * 0.75) as u32);
+
+                    while {
+                        service
+                            .get_characteristic(STATUS_CHARACTERISTIC_UUID)
+                            .await?
+                            .read_value()
+                            .await?[0]
+                            > 0
+                    } {
+                        FreeRtos::delay_ms(100);
+                    }
+                }
             }
         }
         Ok(())
     })
+}
+
+fn is_double_turn_move(m: u8) -> bool {
+    m % 3 == 1
+}
+
+fn move_duration(m: u8) -> usize {
+    if is_double_turn_move(m) {
+        DOUBLE_TURN_DURATION_MS
+    } else {
+        QUANTUM_TURN_DURATION_MS
+    }
 }
