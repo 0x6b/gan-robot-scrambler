@@ -2,6 +2,9 @@
 
 Scramble the [GAN Cube Robot](https://www.gancube.com/products/gan-speed-cube-robot) using the M5Stamp C3.
 
+> [!CAUTION]
+> Running this code may break your cube or robot. Use at your own risk.
+
 ## Tested Environment
 
 - [M5Stamp C3 Mate with Pin Headers](https://shop.m5stack.com/products/m5stamp-c3-mate-with-pin-headers) (ESP32-C3)
