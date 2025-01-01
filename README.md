@@ -42,6 +42,10 @@ $ ESPFLASH_PORT=/dev/cu.usbserial-xxxxxxxxxxx espflash flash \
 
 - [The Rust on ESP Book](https://docs.esp-rs.org/book/installation/riscv.html)
 
+## Acknowledgements
+
+[cubing/cubing.js](https://github.com/cubing/cubing.js), especially the [GanRobot.ts](https://github.com/cubing/cubing.js/blob/19e893db4d6b2feaeafd4e40f3a5183b6bad88fc/src/cubing/bluetooth/smart-robot/GanRobot.ts), for the GAN robot control logic.
+
 ## License
 
 MIT. See [LICENSE](LICENSE) for details.
