@@ -1,0 +1,5 @@
+{
+  "env": {
+    "ESPFLASH_PORT": "/dev/cu.usbserial-xxxxxxxxxxx"
+  }
+}

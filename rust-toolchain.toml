@@ -1,0 +1,4 @@
+[toolchain]
+channel = "nightly-2024-11-28"
+targets = ["aarch64-apple-darwin", "riscv32imc-esp-espidf"]
+components = ["rust-src", "rustfmt", "clippy"]
