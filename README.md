@@ -8,16 +8,16 @@ Scramble the [GAN Cube Robot](https://www.gancube.com/products/gan-speed-cube-ro
 ## Tested Environment
 
 - [M5Stamp C3 Mate with Pin Headers](https://shop.m5stack.com/products/m5stamp-c3-mate-with-pin-headers) (ESP32-C3)
-- macOS Sequoia 15.2 (24C101)
+- [GAN Cube Robot](https://www.gancube.com/products/gan-speed-cube-robot)
 - rustc nightly-2024-11-28
+- macOS Sequoia 15.2 (24C101)
 
 ## Setup Development Environment
 
-```console
-$ brew install cmake ninja dfu-util
-$ cargo install ldproxy
-$ cargo install espflash
-```
+This project is `std` application. Make sure you have met the following requirements from the Rust on ESP book:
+
+1. [Rust installation](https://docs.esp-rs.org/book/installation/rust.html)
+2. [RISC-V targets only](https://docs.esp-rs.org/book/installation/riscv.html)
 
 ## Usage
 
@@ -50,9 +50,15 @@ $ ESPFLASH_PORT=/dev/cu.usbserial-xxxxxxxxxxx espflash flash \
     --monitor target/riscv32imc-esp-espidf/debug/gan-robot-scrambler
 ```
 
+### Build troubleshooting
+
+1. Run `cargo x clean --all` to remove all build artifacts and try again.
+2. Check the `rust-toolchain.toml`, and update the nightly version (`toolchain.channel`) if necessary.
+3. Update template with `cargo generate esp-rs/esp-idf-template cargo` to start fresh.
+
 ## References
 
-- [The Rust on ESP Book](https://docs.esp-rs.org/book/installation/riscv.html)
+- [The Rust on ESP Book](https://docs.esp-rs.org/book/)
 
 ## Acknowledgements
 
