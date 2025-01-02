@@ -1,7 +1,4 @@
-use std::{
-    collections::HashMap, env::var, error::Error, fs::read_to_string, path::PathBuf,
-    process::Command,
-};
+use std::{collections::HashMap, env::var, fs::read_to_string, path::PathBuf, process::Command};
 
 use clap::{Parser, Subcommand};
 use env_logger::Env;
@@ -47,7 +44,7 @@ struct Config {
     pub env: Option<HashMap<String, String>>,
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> anyhow::Result<()> {
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let Args { sub_command, config } = Args::parse();

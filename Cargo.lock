@@ -1824,6 +1824,7 @@ dependencies = [
 name = "xtask"
 version = "0.2.0"
 dependencies = [
+ "anyhow",
  "clap",
  "env_logger",
  "log",

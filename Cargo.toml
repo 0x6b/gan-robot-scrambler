@@ -1,10 +1,18 @@
 [package]
 name = "gan-robot-scrambler"
+description = "Scramble the GAN Cube Robot using the M5Stamp C3"
 version = "0.2.0"
 authors = ["kaoru <k@warpnine.io>"]
 edition = "2021"
 resolver = "2"
 rust-version = "1.77"
+
+[workspace]
+members = ["xtask"]
+
+[workspace.dependencies]
+log = "0.4.22"
+anyhow = "1.0.95"
 
 [features]
 default = []
@@ -12,20 +20,28 @@ default = []
 experimental = ["esp-idf-svc/experimental"]
 
 [dependencies]
+# Error handling
+anyhow.workspace = true
+
+# ESP32 support
+esp-idf-sys = "0.35.0"
 esp-idf-svc = { version = "0.49", features = ["critical-section", "embassy-time-driver", "embassy-sync"] }
+
+# LED control
 ws2812-esp32-rmt-driver = { version = "0.10.0", features = ["smart-leds-trait"] }
 smart-leds = "0.4.0"
+
+# BLE
 esp32-nimble = "0.8.2"
+
+# Handle byte as strings
 bstr = "1.11.1"
-esp-idf-sys = "0.35.0"
-log = "0.4.22"
-anyhow = "1.0.95"
+
+# Logging
+log.workspace = true
 
 # explicitly add this to work around https://github.com/esp-rs/std-training/issues/266, although the crate is not used here
 cc = "=1.1.31"
 
 [build-dependencies]
 embuild = "0.32.0"
-
-[workspace]
-members = ["xtask"]
