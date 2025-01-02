@@ -26,12 +26,24 @@ Connect the M5Stamp C3 to your computer and run the following command:
 ```console
 $ cp xtask-config.sample.json xtask-config.json
 $ $EDITOR xtask-config.json # Edit the `env.ESPFLASH_PORT` field to match your setup
-$ cargo x run
+$ cargo x --help
+Usage: cargo <x|xtask> [OPTIONS] <COMMAND>
+
+Commands:
+  run             Build and flash the program to the board
+  build           Build the program
+  clean           Remove the target directory
+  serial-console  Open a serial console
+  help            Print this message or the help of the given subcommand(s)
+
+Options:
+  -c, --config <CONFIG>  [default: xtask-config.json]
+  -h, --help             Print help
 ```
 
-which will compile the code and flash it to the M5Stamp C3. When the LED is in blue, the M5Stamp C3 is ready; just click the button to scramble the cube.
+`cargo x run` will compile the code and flash it to the M5Stamp C3. When the LED is in blue, the M5Stamp C3 is ready; just click the button to scramble the cube.
 
-The `xtask` along with `xtask-config.json` is just a thin wrapper around `cargo` and `espflash` that populates the environment variables from the `xtask-config.json` file.  You can also set the environment variables directly in your shell i.e.:
+The `xtask` along with `xtask-config.json` is just a thin wrapper around `cargo` and `espflash` that populates the environment variables from the `xtask-config.json` file. You can also set the environment variables directly in your shell i.e.:
 
 ```console
 $ ESPFLASH_PORT=/dev/cu.usbserial-xxxxxxxxxxx espflash flash \

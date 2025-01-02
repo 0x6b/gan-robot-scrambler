@@ -1,4 +1,10 @@
-use std::{collections::HashMap, env::var, fs::read_to_string, path::PathBuf, process::Command};
+use std::{
+    collections::HashMap,
+    env::var,
+    fs::{read_to_string, remove_dir_all},
+    path::PathBuf,
+    process::Command,
+};
 
 use clap::{Parser, Subcommand};
 use env_logger::Env;
@@ -19,18 +25,24 @@ struct Args {
 enum SubCommand {
     /// Build and flash the program to the board
     Run {
+        /// Build artifacts in release mode, with optimizations
         #[clap(long)]
         release: bool,
     },
 
     /// Build the program
     Build {
+        /// Build artifacts in release mode, with optimizations
         #[clap(long)]
         release: bool,
     },
 
-    /// Clean the build directory
-    Clean,
+    /// Remove the target directory
+    Clean {
+        /// Remove `.embuild` directory along with the target directory
+        #[clap(long)]
+        all: bool,
+    },
 
     /// Open a serial console
     SerialConsole {
@@ -78,7 +90,12 @@ fn main() -> anyhow::Result<()> {
         SubCommand::SerialConsole { .. } => {
             command.arg("monitor");
         }
-        SubCommand::Clean => {
+        SubCommand::Clean { all } => {
+            if all {
+                if let Ok(workspace_root) = var("CARGO_WORKSPACE_DIR") {
+                    remove_dir_all(PathBuf::from(workspace_root).join(".embuild"))?;
+                }
+            }
             command.arg("clean");
         }
     }
