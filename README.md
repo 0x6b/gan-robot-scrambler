@@ -9,7 +9,7 @@ Scramble the [GAN Cube Robot](https://www.gancube.com/products/gan-speed-cube-ro
 
 - [M5Stamp C3 Mate with Pin Headers](https://shop.m5stack.com/products/m5stamp-c3-mate-with-pin-headers) (ESP32-C3)
 - [GAN Cube Robot](https://www.gancube.com/products/gan-speed-cube-robot)
-- rustc nightly-2024-11-28
+- Rust 1.85.0-nightly (6b6a867ae 2024-11-27)
 - macOS Sequoia 15.2 (24C101)
 
 ## Setup Development Environment
